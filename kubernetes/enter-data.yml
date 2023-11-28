@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enter-data
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enter-data
+  template:
+    metadata:
+      labels:
+        app: enter-data
+    spec:
+      containers:
+        - args:
+            - sh
+            - -c
+            - /wait && python3 ./app.py
+          env:
+            - name: WAIT_HOSTS
+              value: mysql-db:3306
+            - name: WAIT_HOSTS_TIMEOUT
+              value: "300"
+            - name: WAIT_HOST_CONNECT_TIMEOUT
+              value: "30"
+            - name: WAIT_SLEEP_INTERVAL
+              value: "30"
+          name: enter-data
+          image: bxian03/enter_data
+          ports:
+            - containerPort: 5000
+          # Add any additional configuration needed
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enter-data
+  labels:
+    app: enter-data
+spec:
+  type: LoadBalancer
+  selector:
+    app: enter-data
+  ports:
+    - name: "5000"
+      protocol: TCP
+      port: 5000
+      targetPort: 5000

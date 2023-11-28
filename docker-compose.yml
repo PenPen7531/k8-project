@@ -1,0 +1,62 @@
+version: '3.0'
+services:
+  analytics:
+    container_name: analytics
+    image: bxian03/analytics
+    depends_on:
+      - mysql-db
+      - mongodb
+
+  mongodb:
+    container_name: mongodb
+    image: bxian03/mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  auth-service:
+    container_name: auth-service
+    image: bxian03/auth_service
+    ports:
+      - "3000:3000"
+
+  enter-data:
+    container_name: enter-data
+    image: bxian03/enter_data
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      - mysql-db
+
+    # Used to wait for mysql_db to run
+    environment:
+      - WAIT_HOSTS=mysql-db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+
+    # Wait and then start application afterwards
+    command: sh -c "/wait && python3 ./app.py"
+
+  mysql-db:
+    container_name: mysql-db
+    image: bxian03/mysql_db
+    ports:
+      - "3306:3306"
+      - "8080:8080"
+    environment:
+      - MYSQL_ROOT_PASSWORD=P@ssw0rd
+    volumes:
+      - my_sql_volume:/var/lib/mysql
+
+  show_results:
+    container_name: show-results
+    image: bxian03/show_results
+    ports:
+      - "5001:5000"
+
+volumes:
+  my_sql_volume:
+  mongo_data:

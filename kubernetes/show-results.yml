@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: show-results
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: show-results
+  template:
+    metadata:
+      labels:
+        app: show-results
+    spec:
+      containers:
+        - name: show-results
+          image: bxian03/show_results
+          ports:
+            - containerPort: 5000
+          resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: show-results
+spec:
+  type: LoadBalancer
+  selector:
+    app: show-results
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5000

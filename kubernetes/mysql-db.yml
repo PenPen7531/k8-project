@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  template:
+    metadata:
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+        - name: mysql-db
+          image: bxian03/mysql_db
+          ports:
+            - containerPort: 3306
+            - containerPort: 8080
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "P@ssw0rd"
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: my-sql-volume
+          resources: {}
+      volumes:
+        - name: my-sql-volume
+          persistentVolumeClaim:
+            claimName: my-sql-volume
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-db
+spec:
+  selector:
+    app: mysql-db
+  ports:
+    - name: "3306"
+      protocol: TCP
+      port: 3306
+      targetPort: 3306
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: my-sql-volume
+  name: my-sql-volume
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}

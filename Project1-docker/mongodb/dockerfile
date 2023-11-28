@@ -1,0 +1,11 @@
+FROM mongo:latest
+
+COPY db_setup.sh /opt/src/scripts/db_setup.sh
+
+RUN chmod u+x /opt/src/scripts/db_setup.sh
+
+RUN mongod --fork --logpath /var/log/mongod.log && /opt/src/scripts/db_setup.sh
+
+RUN rm /tmp/mongodb-27017.sock
+
+EXPOSE 27017

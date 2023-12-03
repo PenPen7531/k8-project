@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enter-data
+  labels:
+    app: enter-data
+spec:
+  type: LoadBalancer
+  selector:
+    app: enter-data
+  ports:
+    - name: "5000"
+      protocol: TCP
+      port: 80
+      targetPort: 5000

@@ -27,24 +27,8 @@ spec:
             - name: WAIT_SLEEP_INTERVAL
               value: "30"
           name: enter-data
-          image: bxian03/enter_data
+          image: penpen7531/enter_data:v2
           ports:
             - containerPort: 5000
           # Add any additional configuration needed
           resources: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: enter-data
-  labels:
-    app: enter-data
-spec:
-  type: LoadBalancer
-  selector:
-    app: enter-data
-  ports:
-    - name: "5000"
-      protocol: TCP
-      port: 80
-      targetPort: 5000

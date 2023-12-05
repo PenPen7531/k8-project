@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: enter-datav2
 spec:
-  replicas: 3
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 2
   selector:
     matchLabels:
       app: enter-data
